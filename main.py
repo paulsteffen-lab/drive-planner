@@ -35,11 +35,15 @@ def run(
     name_slug = slugify(route.name)
     output_path = Path(output_dir)
 
-    gpx_xml = build_gpx(geocoded_stops)
-    gpx_path = write_gpx_file(gpx_xml, name_slug, output_path)
+    try:
+        gpx_xml = build_gpx(geocoded_stops)
+        gpx_path = write_gpx_file(gpx_xml, name_slug, output_path)
 
-    links = build_links(route.stops)
-    link_paths = write_link_files(links, name_slug, output_path)
+        links = build_links(route.stops)
+        link_paths = write_link_files(links, name_slug, output_path)
+    except OSError as exc:
+        print(f"Error: Cannot write output files: {exc}", file=sys.stderr)
+        return 1
 
     print(f"Route '{route.name}': {len(route.stops)} stops")
     print(f"  GPX file: {gpx_path}")
