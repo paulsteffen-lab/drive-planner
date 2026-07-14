@@ -40,6 +40,19 @@ def test_segment_stops_20_stops_splits_into_three_overlapping_chunks():
     ]
 
 
+def test_segment_stops_19_stops_no_trailing_single_stop_chunk():
+    stops = [f"Stop {i}" for i in range(19)]
+
+    chunks = segment_stops(stops, max_points=10)
+
+    assert chunks == [
+        [f"Stop {i}" for i in range(0, 10)],
+        [f"Stop {i}" for i in range(9, 19)],
+    ]
+    for chunk in chunks:
+        assert len(chunk) >= 2
+
+
 def test_build_link_with_no_waypoints():
     link = build_link(["Origin Address", "Destination Address"])
 

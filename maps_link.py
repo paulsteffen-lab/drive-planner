@@ -23,7 +23,7 @@ def segment_stops(stops, max_points=10):
     start = 0
     step = max_points - 1
     
-    while start < len(stops):
+    while start < len(stops) - 1:
         end = start + max_points
         chunks.append(stops[start:end])
         start += step
