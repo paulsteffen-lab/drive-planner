@@ -43,3 +43,9 @@ def test_write_link_files_multiple_legs(tmp_path):
     ]
     assert paths[0].read_text() == "https://example.com/1\n"
     assert paths[2].read_text() == "https://example.com/3\n"
+
+
+def test_write_link_files_empty_links_returns_empty_list(tmp_path):
+    paths = write_link_files([], "route", tmp_path)
+
+    assert paths == []

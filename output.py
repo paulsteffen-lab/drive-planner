@@ -5,7 +5,12 @@ from pathlib import Path
 
 
 def slugify(name: str) -> str:
-    """Turn a route name into a filesystem-safe slug."""
+    """Turn a route name into a filesystem-safe slug.
+
+    Non-alphanumeric runs (including accented/non-ASCII characters) are
+    collapsed to a single underscore, and the result is lowercased.
+    Falls back to "route" if nothing alphanumeric remains.
+    """
     slug = re.sub(r"[^a-zA-Z0-9]+", "_", name.strip()).strip("_").lower()
     return slug or "route"
 
