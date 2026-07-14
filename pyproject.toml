@@ -1,0 +1,15 @@
+[project]
+name = "drive-planner"
+version = "0.1.0"
+description = "Convert curated driving-tour stop lists into shareable Google Maps links and GPX files"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "geopy>=2.4",
+    "gpxpy>=1.6",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+]
