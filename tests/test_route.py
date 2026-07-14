@@ -54,3 +54,10 @@ def test_load_route_invalid_json(tmp_path):
 
     with pytest.raises(RouteError, match="Invalid JSON"):
         load_route(route_path)
+
+
+def test_load_route_file_not_found(tmp_path):
+    route_path = tmp_path / "does_not_exist.json"
+
+    with pytest.raises(RouteError, match="Cannot read"):
+        load_route(route_path)

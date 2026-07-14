@@ -24,7 +24,12 @@ def load_route(path: Path | str) -> Route:
     path = Path(path)
 
     try:
-        data = json.loads(path.read_text())
+        text = path.read_text()
+    except (FileNotFoundError, PermissionError, OSError) as exc:
+        raise RouteError(f"Cannot read route file {path}: {exc}") from exc
+
+    try:
+        data = json.loads(text)
     except json.JSONDecodeError as exc:
         raise RouteError(f"Invalid JSON in {path}: {exc}") from exc
 
