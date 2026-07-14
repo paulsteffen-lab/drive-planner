@@ -100,3 +100,23 @@ def test_geocode_all_error_message_includes_stop_index(tmp_path):
 
     with pytest.raises(GeocodeError, match="Stop 2"):
         geocoder.geocode_all(["Addr A", "Addr B (unresolvable)"])
+
+
+def test_geocode_recovers_from_corrupted_cache(tmp_path):
+    cache_path = tmp_path / "cache.json"
+    # Write invalid JSON to the cache file
+    cache_path.write_text("{ invalid json }")
+    calls = []
+    
+    # Should not raise; should treat corrupted cache as empty
+    geocoder = Geocoder(
+        cache_path=cache_path,
+        geocode_func=make_fake_geocode_func({"Addr A": (1.0, 2.0)}, calls),
+        sleep_seconds=0,
+    )
+
+    # Should work normally, calling the geocode_func (not a cache hit)
+    result = geocoder.geocode("Addr A")
+    assert result == (1.0, 2.0)
+    assert calls == ["Addr A"]  # Should have called the geocode_func, not found in cache
+

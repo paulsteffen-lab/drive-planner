@@ -53,7 +53,10 @@ class Geocoder:
 
     def _load_cache(self) -> dict[str, list[float]]:
         if self.cache_path.exists():
-            return json.loads(self.cache_path.read_text())
+            try:
+                return json.loads(self.cache_path.read_text())
+            except json.JSONDecodeError:
+                return {}
         return {}
 
     def _save_cache(self) -> None:
