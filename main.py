@@ -42,6 +42,11 @@ def run(
         links = build_links(route.stops)
         link_paths = write_link_files(links, name_slug, output_path)
     except OSError as exc:
+        # Remove any partially-written output files for this route (the GPX
+        # file, or some-but-not-all leg/link files) so a failed run never
+        # leaves misleading artifacts behind.
+        for stray in output_path.glob(f"{name_slug}*"):
+            stray.unlink(missing_ok=True)
         print(f"Error: Cannot write output files: {exc}", file=sys.stderr)
         return 1
 
