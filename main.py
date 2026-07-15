@@ -10,8 +10,8 @@ from pathlib import Path
 
 from geocode import GeocodeError, Geocoder
 from gpx import build_gpx
-from maps_link import build_links
-from output import slugify, write_gpx_file, write_link_files
+from maps_link import build_links, build_path_link
+from output import slugify, write_gpx_file, write_link_files, write_path_link_file
 from route import Route, RouteError, load_route
 
 
@@ -22,6 +22,8 @@ class GenerateResult:
     gpx_path: Path
     link_paths: list[Path]
     links: list[str]
+    path_link: str
+    path_link_path: Path
 
 
 def generate(
@@ -48,6 +50,9 @@ def generate(
 
         links = build_links(route.stops)
         link_paths = write_link_files(links, name_slug, output_path)
+
+        path_link = build_path_link(route.stops)
+        path_link_path = write_path_link_file(path_link, name_slug, output_path)
     except OSError:
         for stray in output_path.glob(f"{name_slug}*"):
             stray.unlink(missing_ok=True)
@@ -59,6 +64,8 @@ def generate(
         gpx_path=gpx_path,
         link_paths=link_paths,
         links=links,
+        path_link=path_link,
+        path_link_path=path_link_path,
     )
 
 
@@ -90,6 +97,7 @@ def run(
         print(f"  Segmented into {len(result.link_paths)} legs:")
         for path in result.link_paths:
             print(f"    {path}")
+    print(f"  All-stops link file: {result.path_link_path}")
 
     return 0
 

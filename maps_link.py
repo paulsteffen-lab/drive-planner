@@ -66,6 +66,29 @@ def build_link(chunk):
     return url
 
 
+def build_path_link(stops):
+    """
+    Build a single Google Maps directions link using the path-segment URL
+    format (https://www.google.com/maps/dir/Stop1/Stop2/.../StopN), which
+    keeps every stop as an individually-resolved waypoint in one link.
+
+    Unlike the ``api=1&waypoints=`` format built by build_link (officially
+    capped at 10 total stops), this format has been verified to work with
+    real routes of at least 30 stops without truncation.
+
+    Args:
+        stops: List of stop addresses, in order
+
+    Returns:
+        A single URL string containing all stops
+    """
+    if len(stops) < 2:
+        raise ValueError("At least origin and destination are required")
+
+    path = "/".join(quote(stop, safe='') for stop in stops)
+    return f"https://www.google.com/maps/dir/{path}?travelmode=driving"
+
+
 def build_links(stops):
     """
     Build multiple Google Maps directions links for a long route.

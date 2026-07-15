@@ -24,6 +24,10 @@ def test_generate_short_route_creates_gpx_and_single_link_file(tmp_path):
     assert result.link_paths == [output_dir / "short_loop_link.txt"]
     assert len(result.links) == 1
     assert result.links[0].startswith("https://www.google.com/maps/dir/?api=1")
+    assert result.path_link_path == output_dir / "short_loop_all_stops_link.txt"
+    assert result.path_link.startswith("https://www.google.com/maps/dir/Addr")
+    assert result.path_link.endswith("?travelmode=driving")
+    assert result.path_link_path.exists()
 
 
 def test_generate_long_route_creates_multiple_legs(tmp_path):
@@ -39,6 +43,10 @@ def test_generate_long_route_creates_multiple_legs(tmp_path):
     assert len(result.link_paths) == 3
     assert len(result.links) == 3
     assert result.gpx_path.exists()
+    assert result.path_link_path == output_dir / "long_loop_all_stops_link.txt"
+    assert result.path_link.startswith("https://www.google.com/maps/dir/")
+    assert "Stop%2019" in result.path_link
+    assert result.path_link_path.exists()
 
 
 def test_generate_raises_geocode_error_and_cleans_up_partial_output(tmp_path, monkeypatch):
@@ -97,6 +105,7 @@ def test_run_short_route_creates_gpx_and_single_link_file(tmp_path):
     assert (output_dir / "short_loop_link.txt").exists()
     link_content = (output_dir / "short_loop_link.txt").read_text()
     assert link_content.startswith("https://www.google.com/maps/dir/?api=1")
+    assert (output_dir / "short_loop_all_stops_link.txt").exists()
 
 
 def test_run_long_route_creates_gpx_and_multiple_leg_files(tmp_path):
@@ -113,6 +122,7 @@ def test_run_long_route_creates_gpx_and_multiple_leg_files(tmp_path):
     assert (output_dir / "long_loop_leg1.txt").exists()
     assert (output_dir / "long_loop_leg2.txt").exists()
     assert (output_dir / "long_loop_leg3.txt").exists()
+    assert (output_dir / "long_loop_all_stops_link.txt").exists()
 
 
 def test_run_returns_nonzero_on_invalid_route_file(tmp_path, capsys):

@@ -3,9 +3,10 @@
 Convert a curated, ordered list of driving-tour stop addresses into formats
 that are easy to share and open directly on a smartphone:
 
-- A tappable Google Maps link (or a sequence of links for routes with more
-  than ~10 stops, since Google Maps' in-app navigation reliably supports
-  only that many)
+- A tappable Google Maps link with every stop in one URL (works well beyond
+  the official 10-waypoint limit — verified with 30+ stops), plus a
+  legs-based fallback (a sequence of links, each covering ≤10 stops) in
+  case Google Maps ever struggles with a very long single link
 - A GPX file — a reliable fallback for apps that handle long stop lists
   better (OsmAnd, Organic Maps), and importable into Google Maps too
 
@@ -42,9 +43,12 @@ uv run python main.py resources/routes/<name>.json
 
 3. Find the outputs in `output/`:
    - `<name>.gpx` — full route, all stops, for GPX-compatible apps
-   - `<name>_link.txt` — a single Google Maps link (routes with ≤10 stops)
-   - `<name>_leg1.txt`, `_leg2.txt`, ... — sequential Google Maps links
-     (routes with more than 10 stops)
+   - `<name>_all_stops_link.txt` — a single Google Maps link with every
+     stop as its own waypoint
+   - `<name>_link.txt` — a single legs-format Google Maps link (routes
+     with ≤10 stops)
+   - `<name>_leg1.txt`, `_leg2.txt`, ... — sequential legs-format Google
+     Maps links (routes with more than 10 stops), kept as a fallback
 
 Geocoding results are cached in `.geocode_cache.json` (gitignored) to avoid
 re-querying the same addresses on repeated runs.

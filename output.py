@@ -40,3 +40,12 @@ def write_link_files(
         path.write_text(link + "\n")
         paths.append(path)
     return paths
+
+
+def write_path_link_file(path_link: str, name_slug: str, output_dir: Path | str) -> Path:
+    """Write the single all-stops path-format Google Maps link to a file."""
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    path = output_dir / f"{name_slug}_all_stops_link.txt"
+    path.write_text(path_link + "\n")
+    return path

@@ -1,4 +1,6 @@
-from maps_link import build_link, build_links, segment_stops
+from urllib.parse import quote
+
+from maps_link import build_link, build_links, build_path_link, segment_stops
 
 
 def test_segment_stops_under_limit_returns_single_chunk():
@@ -93,3 +95,31 @@ def test_build_links_long_route_returns_multiple_links():
     assert len(links) == 3
     for link in links:
         assert link.startswith("https://www.google.com/maps/dir/?api=1")
+
+
+def test_build_path_link_with_two_stops():
+    link = build_path_link(["Origin Address", "Destination Address"])
+
+    assert link == (
+        "https://www.google.com/maps/dir/"
+        "Origin%20Address/Destination%20Address"
+        "?travelmode=driving"
+    )
+
+
+def test_build_path_link_with_many_stops_keeps_them_all_in_one_link():
+    stops = [f"Stop {i}" for i in range(25)]
+
+    link = build_path_link(stops)
+
+    assert link.startswith("https://www.google.com/maps/dir/")
+    assert link.endswith("?travelmode=driving")
+    for stop in stops:
+        assert quote(stop, safe="") in link
+
+
+def test_build_path_link_requires_at_least_two_stops():
+    import pytest
+
+    with pytest.raises(ValueError):
+        build_path_link(["Only One Stop"])
