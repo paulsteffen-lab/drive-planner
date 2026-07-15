@@ -4,6 +4,61 @@ import pytest
 
 import geocode
 import main
+from route import load_route
+
+
+def test_generate_short_route_creates_gpx_and_single_link_file(tmp_path):
+    route_path = tmp_path / "route.json"
+    route_path.write_text(
+        json.dumps({"name": "Short Loop", "stops": ["Addr A", "Addr B", "Addr C"]})
+    )
+    output_dir = tmp_path / "output"
+    cache_path = tmp_path / "cache.json"
+    route = load_route(route_path)
+
+    result = main.generate(route, output_dir=str(output_dir), cache_path=str(cache_path))
+
+    assert result.route_name == "Short Loop"
+    assert result.stop_count == 3
+    assert result.gpx_path == output_dir / "short_loop.gpx"
+    assert result.link_paths == [output_dir / "short_loop_link.txt"]
+    assert len(result.links) == 1
+    assert result.links[0].startswith("https://www.google.com/maps/dir/?api=1")
+
+
+def test_generate_long_route_creates_multiple_legs(tmp_path):
+    stops = [f"Stop {i}" for i in range(20)]
+    route_path = tmp_path / "route.json"
+    route_path.write_text(json.dumps({"name": "Long Loop", "stops": stops}))
+    output_dir = tmp_path / "output"
+    cache_path = tmp_path / "cache.json"
+    route = load_route(route_path)
+
+    result = main.generate(route, output_dir=str(output_dir), cache_path=str(cache_path))
+
+    assert len(result.link_paths) == 3
+    assert len(result.links) == 3
+    assert result.gpx_path.exists()
+
+
+def test_generate_raises_geocode_error_and_cleans_up_partial_output(tmp_path, monkeypatch):
+    route_path = tmp_path / "route.json"
+    route_path.write_text(
+        json.dumps({"name": "Short Loop", "stops": ["Addr A", "Addr B", "Addr C"]})
+    )
+    output_dir = tmp_path / "output"
+    cache_path = tmp_path / "cache.json"
+    route = load_route(route_path)
+
+    def failing_write_link_files(links, name_slug, out_dir):
+        raise OSError("simulated disk failure")
+
+    monkeypatch.setattr(main, "write_link_files", failing_write_link_files)
+
+    with pytest.raises(OSError, match="simulated disk failure"):
+        main.generate(route, output_dir=str(output_dir), cache_path=str(cache_path))
+
+    assert not (output_dir / "short_loop.gpx").exists()
 
 
 @pytest.fixture(autouse=True)
