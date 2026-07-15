@@ -109,10 +109,15 @@ if generated:
     )
 
     st.subheader("Google Maps links")
-    st.markdown(f"[Open all {generated['stop_count']} stops in one link]({generated['path_link']})")
+    st.markdown(
+        f"[Start navigation from my location, through all "
+        f"{generated['stop_count']} stops]({generated['path_link']})"
+    )
     st.caption(
-        "This single link keeps every stop as its own waypoint. If Google Maps "
-        "ever struggles with a very long route, use the legs below instead."
+        "Opens Google Maps starting from your current location (it will ask "
+        "for location permission) and keeps every stop as its own waypoint. "
+        "If Google Maps ever struggles with a very long route, use the legs "
+        "below instead."
     )
     links = generated["links"]
     if len(links) == 1:

@@ -25,7 +25,7 @@ def test_generate_short_route_creates_gpx_and_single_link_file(tmp_path):
     assert len(result.links) == 1
     assert result.links[0].startswith("https://www.google.com/maps/dir/?api=1")
     assert result.path_link_path == output_dir / "short_loop_all_stops_link.txt"
-    assert result.path_link.startswith("https://www.google.com/maps/dir/Addr")
+    assert result.path_link.startswith("https://www.google.com/maps/dir/Current%20Location/Addr")
     assert result.path_link.endswith("?travelmode=driving")
     assert result.path_link_path.exists()
 

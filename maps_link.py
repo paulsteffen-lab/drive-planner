@@ -76,16 +76,24 @@ def build_path_link(stops):
     capped at 10 total stops), this format has been verified to work with
     real routes of at least 30 stops without truncation.
 
+    The link always starts from "Current Location" so that opening it
+    starts turn-by-turn navigation from wherever the device is when the
+    link is clicked, rather than from the first listed stop.
+
     Args:
-        stops: List of stop addresses, in order
+        stops: List of stop addresses, in order (excluding the starting
+            point - "Current Location" is prepended automatically)
 
     Returns:
-        A single URL string containing all stops
+        A single URL string starting from the current location and
+        containing all stops
     """
-    if len(stops) < 2:
-        raise ValueError("At least origin and destination are required")
+    if len(stops) < 1:
+        raise ValueError("At least one stop is required")
 
-    path = "/".join(quote(stop, safe='') for stop in stops)
+    path = "/".join(
+        quote(stop, safe='') for stop in ["Current Location", *stops]
+    )
     return f"https://www.google.com/maps/dir/{path}?travelmode=driving"
 
 
