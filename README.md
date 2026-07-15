@@ -49,6 +49,33 @@ uv run python main.py resources/routes/<name>.json
 Geocoding results are cached in `.geocode_cache.json` (gitignored) to avoid
 re-querying the same addresses on repeated runs.
 
+## Streamlit app
+
+Instead of hand-writing a route JSON file, you can use the interactive
+Streamlit app:
+
+```bash
+uv run streamlit run app.py
+```
+
+Open the printed local URL, enter a route name and the ordered addresses
+(one per line), and click **Generate**. This writes
+`resources/routes/<name>.json` and the corresponding `.gpx`/`.txt` files
+to `output/`, and offers download buttons for each.
+
+### Deploying to Streamlit Community Cloud
+
+1. Push this repository to GitHub.
+2. On [share.streamlit.io](https://share.streamlit.io), create a new app
+   pointing at this repo, branch, and `app.py` as the entrypoint.
+3. Streamlit Cloud installs dependencies from `pyproject.toml`
+   automatically via `uv`.
+
+Note: Streamlit Cloud's filesystem is ephemeral — files written to
+`resources/routes/` and `output/` during a session are not guaranteed to
+persist across app restarts or redeploys. Use the download buttons to
+keep anything you generate.
+
 ## Testing
 
 ```bash
