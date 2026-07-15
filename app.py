@@ -115,14 +115,7 @@ if generated:
         for i, link in enumerate(links, start=1):
             st.markdown(f"[Leg {i}]({link})")
 
-    st.subheader("Download files")
-    st.download_button(
-        "Download route JSON",
-        data=generated["route_json"]["data"],
-        file_name=generated["route_json"]["file_name"],
-        mime="application/json",
-        key="download_route_json",
-    )
+    st.subheader("Download file")
     st.download_button(
         "Download GPX file",
         data=generated["gpx"]["data"],
@@ -130,11 +123,3 @@ if generated:
         mime="application/gpx+xml",
         key="download_gpx",
     )
-    for link_file in generated["link_files"]:
-        st.download_button(
-            f"Download {link_file['file_name']}",
-            data=link_file["data"],
-            file_name=link_file["file_name"],
-            mime="text/plain",
-            key=f"download_{link_file['file_name']}",
-        )
