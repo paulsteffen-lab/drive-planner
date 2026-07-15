@@ -64,6 +64,7 @@ if st.button("Generate"):
                     route, output_dir=str(OUTPUT_DIR), cache_path=str(CACHE_PATH)
                 )
             except GeocodeError as exc:
+                route_path.unlink(missing_ok=True)
                 st.error(str(exc))
             except OSError as exc:
                 st.error(f"Cannot write output files: {exc}")
